@@ -1,0 +1,100 @@
+-- Criar o banco de dados
+CREATE DATABASE Livraria2;
+USE Livraria2;
+
+-- Tabela Editora
+CREATE TABLE Editora (
+    ID_Editora INT AUTO_INCREMENT PRIMARY KEY,
+    NomeFantasia_Editora ENUM('Editora A', 'Editora B', 'Editora C') NOT NULL,
+    RazaoSocial_Editora VARCHAR(255) NOT NULL,
+    Endereco_Editora VARCHAR(255),
+    Telefone_Editora VARCHAR(20),
+    Pais_Editora VARCHAR(50) DEFAULT 'Brasil'
+);
+
+-- Inserir registros na tabela Editora
+INSERT INTO Editora (NomeFantasia_Editora, RazaoSocial_Editora, Endereco_Editora, Telefone_Editora) VALUES
+('Editora A', 'Razão Social A', 'Endereço A', '123456789'),
+('Editora B', 'Razão Social B', 'Endereço B', '987654321'),
+('Editora C', 'Razão Social C', 'Endereço C', '456789123');
+
+-- Tabela Autor
+CREATE TABLE Autor (
+    ID_Autor INT AUTO_INCREMENT PRIMARY KEY,
+    Nome_Autor VARCHAR(255) NOT NULL,
+    RG_Autor VARCHAR(20)
+);
+
+-- Inserir registros na tabela Autor
+INSERT INTO Autor (Nome_Autor, RG_Autor) VALUES
+('Autor A', 'RG A'),
+('Autor B', 'RG B'),
+('Autor C', 'RG C');
+
+-- Tabela Cliente
+CREATE TABLE Cliente (
+    ID_Cliente INT AUTO_INCREMENT PRIMARY KEY,
+    Nome_Cliente VARCHAR(255) NOT NULL,
+    RG_Cliente VARCHAR(20),
+    CPF_Cliente VARCHAR(14) UNIQUE NOT NULL,
+    Endereco_Cliente VARCHAR(255),
+    Pais_Cliente VARCHAR(50) DEFAULT 'Brasil'
+);
+
+-- Inserir registros na tabela Cliente
+INSERT INTO Cliente (Nome_Cliente, RG_Cliente, CPF_Cliente, Endereco_Cliente) VALUES
+('Cliente A', 'RG Cliente A', '111.222.333-44', 'Endereço Cliente A'),
+('Cliente B', 'RG Cliente B', '222.333.444-55', 'Endereço Cliente B'),
+('Cliente C', 'RG Cliente C', '333.444.555-66', 'Endereço Cliente C');
+
+-- Tabela Financiador
+CREATE TABLE Financiador (
+    ID_Financiador INT AUTO_INCREMENT PRIMARY KEY,
+    Nome_Financiador VARCHAR(255) DEFAULT 'Financiador Público',
+    CNPJ_Financiador VARCHAR(18)
+);
+
+-- Inserir registros na tabela Financiador
+INSERT INTO Financiador (Nome_Financiador, CNPJ_Financiador) VALUES
+('Financiador A', '00.000.000/0001-00'),
+('Financiador B', '11.111.111/1111-11'),
+('Financiador C', '22.222.222/2222-22');
+
+-- Tabela Livro
+CREATE TABLE Livro (
+    ID_Livro INT AUTO_INCREMENT PRIMARY KEY,
+    ISBN_Livro VARCHAR(20),
+    Titulo_Livro VARCHAR(255),
+    Preco_Livro DECIMAL(10, 2) CHECK (Preco_Livro >= 0),
+    Categoria_Livro ENUM('Horror', 'Ficção', 'Romance', 'Ação'),
+    ID_Editora INT,
+    ID_Autor INT,
+    ID_Financiador INT,
+    FOREIGN KEY (ID_Editora) REFERENCES Editora(ID_Editora),
+    FOREIGN KEY (ID_Autor) REFERENCES Autor(ID_Autor),
+    FOREIGN KEY (ID_Financiador) REFERENCES Financiador(ID_Financiador)
+);
+
+-- Inserir registros na tabela Livro
+INSERT INTO Livro (ISBN_Livro, Titulo_Livro, Preco_Livro, Categoria_Livro, ID_Editora, ID_Autor, ID_Financiador) VALUES
+('1234567890123', 'Livro A', 29.90, 'Ficção', 1, 1, 1),
+('2345678901234', 'Livro B', 49.90, 'Romance', 2, 2, 2),
+('3456789012345', 'Livro C', 39.90, 'Ação', 3, 3, 3);
+
+-- Tabela Pedido
+CREATE TABLE Pedido (
+    ID_Pedido INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Livro INT,
+    Qtd_Pedido INT CHECK (Qtd_Pedido >= 0),
+    ID_Cliente INT,
+    FOREIGN KEY (ID_Livro) REFERENCES Livro(ID_Livro),
+    FOREIGN KEY (ID_Cliente) REFERENCES Cliente(ID_Cliente)
+);
+
+-- Inserir registros na tabela Pedido
+INSERT INTO Pedido (ID_Livro, Qtd_Pedido, ID_Cliente) VALUES
+(1, 3, 1),
+(2, 2, 2),
+(3, 1, 3);
+
+
